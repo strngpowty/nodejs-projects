@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
 app.post('/', (req, res) => {
     const {task} = req.body
     if(task === undefined) {
-        res.status(400).send("Please enter valid task")
+        return res.status(400).send("Please enter valid task")
     }
     const newTodo = {
         id: taskID++,
@@ -29,10 +29,10 @@ app.put('/:id', (req, res) => {
     const {task, completed} = req.body
     const taskIndex = todos.findIndex(t => t.id === id)
     if(taskIndex === -1) 
-        res.status(400).send("Task not found")
-    todos[taskIndex].task = task
-    todos[taskIndex].completed = completed
-    res.status(200).send(todos)
+        return res.status(400).send("Task not found")
+    if(task !== undefined) todos[taskIndex].task = task
+    if(completed !== undefined) todos[taskIndex].completed = completed
+    res.status(201).send(todos)
 })
 
 app.delete('/:id', (req, res) => {
@@ -40,8 +40,8 @@ app.delete('/:id', (req, res) => {
     const originalLength = todos.length
     todos = todos.filter(t => t.id !== id)
     if(originalLength === todos.length)
-        res.status(400).send("item not delted")
-    res.status(200).send(todos)
+        return res.status(400).send("item not delted")
+    res.status(204).send(todos)
 })
 
 app.listen(port, ()=> {
